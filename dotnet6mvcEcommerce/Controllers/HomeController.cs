@@ -14,7 +14,7 @@ namespace dotnet6mvcEcommerce.Controllers
             _logger = logger;
         }
 
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Index(int? id)
         {
             Student student = new Student() { Id = 1, Name = "Quan程式設計" };
