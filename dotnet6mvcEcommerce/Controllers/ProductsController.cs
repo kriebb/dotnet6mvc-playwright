@@ -67,22 +67,8 @@ namespace dotnet6mvcEcommerce.Controllers
             {
                 if (product.FormFile != null)
                 {
-                    //文件名稱處理(不能有重複名稱)
-                    //1.GUID
-                    //2.把文件名稱用時間來保存
-                    string fileName = Guid.NewGuid().ToString() + ".jpg";//(可取得檔案副檔名去做附加，這邊統一改jpg)
-
-                    //保存位置
-                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Images", fileName);
-
-                    //保存文件
-                    using (var stream = System.IO.File.Create(filePath))
-                    {
-                        await product.FormFile.CopyToAsync(stream);
-                    }
-
                     //保存文件名稱--保存到資料庫
-                    product.ImageUrl = fileName;
+                    product.ImageUrl = await SaveImage(product.FormFile);
 
                 }
 
@@ -112,11 +98,9 @@ namespace dotnet6mvcEcommerce.Controllers
         }
 
         // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Stock,ImageUrl")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Stock,ImageUrl, FormFile")] Product product)
         {
             if (id != product.Id)
             {
@@ -127,6 +111,13 @@ namespace dotnet6mvcEcommerce.Controllers
             {
                 try
                 {
+                    //保存圖片
+                    if(product.FormFile != null)
+                    {
+                      string fileName = await SaveImage(product.FormFile);
+                        product.ImageUrl = fileName;
+                    }
+
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                 }
@@ -187,6 +178,29 @@ namespace dotnet6mvcEcommerce.Controllers
         #endregion
 
         #region Private
+        /// <summary>
+        /// 保存文件
+        /// </summary>
+        /// <param name="formFile"></param>
+        /// <returns></returns>
+        private async Task<string> SaveImage(IFormFile formFile)
+        {
+            //文件名稱處理(不能有重複名稱)
+            //1.GUID
+            //2.把文件名稱用時間來保存
+            string fileName = Guid.NewGuid().ToString() + ".jpg";//(可取得檔案副檔名去做附加，這邊統一改jpg)
+
+            //保存位置
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Images", fileName);
+
+            //保存文件
+            using (var stream = System.IO.File.Create(filePath))
+            {
+                await formFile.CopyToAsync(stream);
+            }
+            return fileName;
+        }
+
         private bool ProductExists(int id)
         {
             return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
