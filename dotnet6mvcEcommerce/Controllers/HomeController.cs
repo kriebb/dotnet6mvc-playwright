@@ -33,6 +33,9 @@ namespace dotnet6mvcEcommerce.Controllers
             return View();
         }
 
+        //為了提高回應時間和可伸縮性
+        //ResponseCache緩存由動作方法生的HTTP回應(時間一秒為單位一小時3600秒)
+        //Duration緩存時長，Location
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

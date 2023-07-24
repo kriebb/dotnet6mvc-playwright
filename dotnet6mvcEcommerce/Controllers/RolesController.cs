@@ -25,10 +25,12 @@ namespace dotnet6mvcEcommerce.Controllers
             //創建角色
             await roleManager.CreateAsync(new IdentityRole(AdminRole));
             //創建管理員用戶
-            IdentityUser user = new IdentityUser { UserName = UserEmail, Email = UserEmail };
+            IdentityUser user = new IdentityUser { UserName = UserEmail, Email = UserEmail, EmailConfirmed = true };
             await userManager.CreateAsync(user,UserEmail);
             //把用戶添加到角色
-            return View();
+            await userManager.AddToRoleAsync(user, AdminRole);
+
+            return Redirect("/");
         }
     }
 }
