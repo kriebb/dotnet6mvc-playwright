@@ -59,14 +59,29 @@ namespace dotnet6mvcEcommerce.Controllers
         }
 
         // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,Stock,ImageUrl")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Price,Stock,ImageUrl,FormFile")] Product product)
         {
             if (ModelState.IsValid)
             {
+                if (product.FormFile != null)
+                {
+                    //文件名稱處理(不能有重複名稱)
+                    //1.GUID
+                    //2.把文件名稱用時間來保存
+                    string fileName = Guid.NewGuid().ToString() + ".jpg";//(可取得檔案副檔名去做附加，這邊統一改jpg)
+
+                    //保存位置
+                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Images", fileName);
+
+                    //保存
+                    using (var stream = System.IO.File.Create(filePath))
+                    {
+                        await product.FormFile.CopyToAsync(stream);
+                    }
+                }
+
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
