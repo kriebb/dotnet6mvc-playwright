@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\Images\01a2e369-103a-4aae-ade4-41abcc5b0667.jpg" />
+    <Content Remove="wwwroot\Images\57ea92e0-3219-48de-b674-f5f08ac5558a.jpg" />
+    <Content Remove="wwwroot\Images\5d9315dd-d9f3-4903-8a1c-6d6add505a3b.jpg" />
+    <Content Remove="wwwroot\Images\fdd78626-5086-44b7-b3ad-bbe506be4df5.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.20" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.20" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.20" />

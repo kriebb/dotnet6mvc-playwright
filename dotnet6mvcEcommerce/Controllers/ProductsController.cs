@@ -114,7 +114,11 @@ namespace dotnet6mvcEcommerce.Controllers
                     //保存圖片
                     if(product.FormFile != null)
                     {
-                      string fileName = await SaveImage(product.FormFile);
+                        if(product.ImageUrl != null)
+                        {
+                            RemoveImage(product.ImageUrl);//刪除舊圖片
+                        }
+                        string fileName = await SaveImage(product.FormFile);
                         product.ImageUrl = fileName;
                     }
 
@@ -178,6 +182,23 @@ namespace dotnet6mvcEcommerce.Controllers
         #endregion
 
         #region Private
+
+        //刪除圖片
+        //參數：文件名稱
+        //返回值：void, bool
+        private void RemoveImage(string? fileName)
+        {
+            if(fileName != null)
+            {
+                //獲取文件路徑
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Images", fileName);
+                //刪除圖片
+                System.IO.File.Delete(filePath);
+            }
+
+
+        }
+
         /// <summary>
         /// 保存文件
         /// </summary>
