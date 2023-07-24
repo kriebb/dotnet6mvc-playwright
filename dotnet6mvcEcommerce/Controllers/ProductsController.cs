@@ -173,6 +173,8 @@ namespace dotnet6mvcEcommerce.Controllers
             var product = await _context.Products.FindAsync(id);
             if (product != null)
             {
+                //刪除圖片
+                RemoveImage(product.ImageUrl);
                 _context.Products.Remove(product);
             }
 
@@ -224,7 +226,9 @@ namespace dotnet6mvcEcommerce.Controllers
 
         private bool ProductExists(int id)
         {
-            return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
+            //?., a?.b,如果a為空null,就不會計算b,就直接返回null
+            bool? result = _context.Products?.Any(e => e.Id == id);
+            return result.GetValueOrDefault();
         }
         #endregion
 
