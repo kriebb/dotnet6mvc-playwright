@@ -32,7 +32,7 @@
             @Html.DisplayNameFor(model => model.ImageUrl)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageUrl)
+            <img src="@("/Images/"+ Model.ImageUrl)" class="img-thumbnail" alt="沒有圖片" width="150px">
         </dd>
     </dl>
 </div>
