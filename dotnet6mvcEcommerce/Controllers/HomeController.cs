@@ -37,6 +37,7 @@ namespace dotnet6mvcEcommerce.Controllers
         //ResponseCache緩存由動作方法生的HTTP回應(時間一秒為單位一小時3600秒)
         //Duration緩存時長，Location
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [Route("error")]//使用過濾器自定義路由(不需輸入控制器名稱EX:localhot/error)
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
