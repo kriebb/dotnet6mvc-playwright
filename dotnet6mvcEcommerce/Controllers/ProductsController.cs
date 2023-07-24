@@ -75,11 +75,15 @@ namespace dotnet6mvcEcommerce.Controllers
                     //保存位置
                     string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Images", fileName);
 
-                    //保存
+                    //保存文件
                     using (var stream = System.IO.File.Create(filePath))
                     {
                         await product.FormFile.CopyToAsync(stream);
                     }
+
+                    //保存文件名稱--保存到資料庫
+                    product.ImageUrl = fileName;
+
                 }
 
                 _context.Add(product);
