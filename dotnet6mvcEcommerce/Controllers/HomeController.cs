@@ -17,28 +17,22 @@ namespace dotnet6mvcEcommerce.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Index(int? id)
         {
-            Student student = new Student() { Id = 1, Name = "Quan程式設計" };
-            ViewData["Name"] = "ViewData---Quan程式設計";
-            ViewBag.name = "ViewBag--Quan程式設計";
+            Student student = new Student() { Id = 1, Name = "StudentAdmin" };
+            ViewData["Name"] = "ViewData---StudentAdmin";
+            ViewBag.name = "ViewBag--StudentAdmin";
             return View(student);
-            //return Json(student);
-        }
+                    }
 
         public IActionResult Privacy()
         {
-            //可以寫入文本文件、資料庫、控制台
-            _logger.LogError("嚴重錯誤");
-            _logger.LogWarning("警告錯誤");
-            _logger.LogInformation("在HomeController的Privacy方法內");
+            _logger.LogError("Privacy Error");
+            _logger.LogWarning("Privacy Warning");
+            _logger.LogInformation("HomeController Privacy Action");
             return View();
         }
 
-        //為了提高回應時間和可伸縮性
-        //ResponseCache緩存由動作方法生的HTTP回應(時間一秒為單位一小時3600秒)
-        //Duration緩存時長，Location
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        [Route("error")]//使用過濾器自定義路由(不需輸入控制器名稱EX:localhot/error)
-        public IActionResult Error()
+        [Route("error")]        public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }

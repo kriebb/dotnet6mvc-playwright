@@ -1,0 +1,22 @@
+{
+  "name": "ecommerce",
+  "version": "1.0.0",
+  "description": "Application to show off playwright",
+  "main": "index.js",
+  "scripts": {
+    "start": "your-start-script-here"
+  },
+  "devDependencies": {
+    "del": "^7.0.0",
+    "gulp": "^4.0.2",
+    "gulp-cli": "^2.3.0"
+  },
+  "dependencies": {
+    "bootstrap": "5.3.1",
+    "jquery": "3.7.1",
+    "jquery-validation": "1.19.5",
+    "jquery-validation-unobtrusive": "4.0.0"
+  },
+  "author": "Dotnet.Kriebbels.me",
+  "license": "ISC"
+}

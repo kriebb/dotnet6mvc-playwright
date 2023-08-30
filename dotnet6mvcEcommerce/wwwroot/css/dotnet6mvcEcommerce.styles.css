@@ -1,0 +1,39 @@
+﻿/* Main brand styling */
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+    .navbar-brand:hover {
+        text-decoration: none;
+        color: #007BFF; /* Bootstrap primary color */
+    }
+
+/* Navbar Link styling */
+.nav-link {
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+    .nav-link:hover {
+        color: #007BFF; /* Bootstrap primary color */
+    }
+
+/* Adding a slight hover effect to the navbar items for better UX */
+.nav-item:hover {
+    background-color: #f5f5f5; /* light grey */
+}
+
+/* Adjust box-shadow for the navbar */
+.bg-white.border-bottom.box-shadow {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Styling for mobile view */
+@media (max-width: 575.98px) {
+    .navbar-collapse {
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+}

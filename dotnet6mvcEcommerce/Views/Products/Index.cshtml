@@ -4,10 +4,10 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>商品列表</h1>
+<h1>Products Overview</h1>
 
 <p>
-    <a class="btn btn-primary" asp-action="Create">創建商品</a>
+    <a class="btn btn-primary" asp-action="Create">New</a>
 </p>
 <table class="table">
     <thead>
@@ -40,7 +40,7 @@
                 @Html.DisplayFor(modelItem => item.Stock)
             </td>
             <td>
-                <img src="@("/Images/"+ item.ImageUrl)" class="img-thumbnail" alt="沒有圖片" width="150px">
+                <img src="@("/Images/"+ item.ImageUrl)" class="img-thumbnail" alt="Thumbnail" width="150px">
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
