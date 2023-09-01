@@ -13,27 +13,21 @@ namespace dotnet6mvcEcommerce.Playwright.tests
     [TestFixture()]
     public class HomeTests : PageTest
     {
-        private CustomWebApplicationFactory _webApplicationFactory;
-        private HttpClient _client;
+        private PlaywrightCompatibleWebApplicationFactory _webApplicationFactory;
 
-        private int _port = new Random().Next(44000, 45000);
+        public override BrowserNewContextOptions ContextOptions()
+        {
+            BrowserNewContextOptions? options = base.ContextOptions();
+            options ??= new ();
+
+            options.IgnoreHTTPSErrors = true;
+
+            return options;
+        }
         [OneTimeSetUp]
         public async Task OneTimeSetup()
         {
-            _webApplicationFactory = new CustomWebApplicationFactory()
-            {
-                
-            };
-
-            _webApplicationFactory.WithWebHostBuilder(configuration =>
-            {
-          
-                configuration.ConfigureServices(configureServices =>
-                {
-                    //override any services, like api calls or backends
-                });
-            });
-
+            _webApplicationFactory = new PlaywrightCompatibleWebApplicationFactory();
         }
 
         [SetUp]

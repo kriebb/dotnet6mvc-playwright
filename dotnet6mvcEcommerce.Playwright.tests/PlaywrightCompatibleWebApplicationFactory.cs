@@ -7,13 +7,22 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<dotnet6mvcEcommerce.Program>
 {
-    private IHost _host;
+    private IHost? _hostThatRunsKestrelImpl;
+    private IHost? _hostThatRunsTestServer;
 
+    /// <summary>
+    /// Hack to ensure we can use the deffered way of capturing the program.cs webhostbuilder without refactoring program.cs
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <returns></returns>
     protected override IHost CreateHost(IHostBuilder builder)
     {
+        try
+        {
+
         // Create the host for TestServer now before we  
         // modify the builder to use Kestrel instead.    
-        var testHost = builder.Build();
+        _hostThatRunsTestServer = builder.Build();
 
         // Modify the host builder to use Kestrel instead  
         // of TestServer so we can listen on a real address.    
@@ -26,15 +35,15 @@ public class CustomWebApplicationFactory : WebApplicationFactory<dotnet6mvcEcomm
         // enough" for the address it is listening on to be available.    
         // See https://github.com/dotnet/aspnetcore/issues/33846.    
 
-        _host = builder.Build();
-        _host.Start();
+        _hostThatRunsKestrelImpl = builder.Build();
+        _hostThatRunsKestrelImpl.Start();
 
         // Extract the selected dynamic port out of the Kestrel server  
         // and assign it onto the client options for convenience so it    
         // "just works" as otherwise it'll be the default http://localhost    
         // URL, which won't route to the Kestrel-hosted HTTP server.     
 
-        var server = _host.Services.GetRequiredService<IServer>();
+        var server = _hostThatRunsKestrelImpl.Services.GetRequiredService<IServer>();
         var addresses = server.Features.Get<IServerAddressesFeature>();
 
         ClientOptions.BaseAddress = addresses!.Addresses
@@ -46,8 +55,16 @@ public class CustomWebApplicationFactory : WebApplicationFactory<dotnet6mvcEcomm
         // not being an instance of the concrete type TestServer.    
         // See https://github.com/dotnet/aspnetcore/pull/34702.   
 
-        testHost.Start();
-        return testHost;
+        _hostThatRunsTestServer.Start();
+        return _hostThatRunsTestServer;
+
+        }
+        catch (Exception e)
+        {
+            _hostThatRunsTestServer?.Dispose();
+            _hostThatRunsTestServer?.Dispose();
+            throw;
+        }
     }
 
     public string ServerAddress
@@ -61,10 +78,48 @@ public class CustomWebApplicationFactory : WebApplicationFactory<dotnet6mvcEcomm
 
     private void EnsureServer()
     {
-        if (_host is null)
+        if (_hostThatRunsKestrelImpl is null)
         {
             // This forces WebApplicationFactory to bootstrap the server  
             using var _ = CreateDefaultClient();
         }
+    }
+
+    public override async ValueTask DisposeAsync()
+    {
+        var aggregateException = new List<Exception>();
+        await base.DisposeAsync();
+        try
+        {
+            _hostThatRunsTestServer?.Dispose();
+
+            if (_hostThatRunsTestServer != null)
+            {
+                await _hostThatRunsTestServer.StopAsync().ConfigureAwait(false);
+                _hostThatRunsTestServer?.Dispose();
+            }
+        }
+        catch (Exception e)
+        {
+            aggregateException.Add(e);
+        }
+
+        try
+        {
+            _hostThatRunsKestrelImpl?.Dispose();
+
+            if (_hostThatRunsKestrelImpl != null)
+            {
+                await _hostThatRunsKestrelImpl.StopAsync().ConfigureAwait(false);
+                _hostThatRunsKestrelImpl?.Dispose();
+            }
+        }
+        catch (Exception e)
+        {
+            aggregateException.Add(e);
+        }
+
+        throw new AggregateException("Error when disposing the _hosts for setting up the webapplicationfactory hosts", aggregateException);
+
     }
 }
