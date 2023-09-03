@@ -1,5 +1,8 @@
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using dotnet6mvcEcommerce.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 using NUnit.Framework;
@@ -13,14 +16,19 @@ namespace dotnet6mvcEcommerce.Playwright.tests
     [TestFixture()]
     public class HomeTests : PageTest
     {
+
+
         private PlaywrightCompatibleWebApplicationFactory _webApplicationFactory;
 
+        
         public override BrowserNewContextOptions ContextOptions()
         {
             BrowserNewContextOptions? options = base.ContextOptions();
-            options ??= new ();
-
-            options.IgnoreHTTPSErrors = true;
+            options ??= new()
+            {
+                IgnoreHTTPSErrors = true,
+                
+            };
 
             return options;
         }
@@ -67,6 +75,43 @@ namespace dotnet6mvcEcommerce.Playwright.tests
             await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
 
             await Expect(Page.GetByText("Invalid login attempt.")).ToBeVisibleAsync();
+
+        }
+
+        [Test]
+        public async Task WhenWeRegisterANewUser_WeShouldHaveAConfirmedAccountMessage()
+        {
+            using (var scope = _webApplicationFactory.Services.CreateAsyncScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var adminTest = await dbContext.Users.FirstOrDefaultAsync(x => x.Email == "admin@test.be");
+                if (adminTest != null)
+                    dbContext.Users.Remove(adminTest);
+            }
+
+            await Page.GotoAsync(_webApplicationFactory.ServerAddress);
+
+            await Expect(Page.GetByText("Thank you for confirming your email.")).Not.ToBeVisibleAsync();
+
+            await Page.GetByRole(AriaRole.Link, new() { Name = "Register as a new user" }).ClickAsync();
+
+            await Page.GetByLabel("Email").ClickAsync();
+
+            await Page.GetByLabel("Email").FillAsync("admin@test.be");
+
+            await Page.GetByLabel("Email").PressAsync("Tab");
+
+            await Page.GetByLabel("Password", new() { Exact = true }).FillAsync("Abc.123!");
+
+            await Page.GetByLabel("Password", new() { Exact = true }).PressAsync("Tab");
+
+            await Page.GetByLabel("Confirm password").FillAsync("Abc.123!");
+
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+
+            await Page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your account" }).ClickAsync();
+
+            await Expect(Page.GetByText("Thank you for confirming your email.")).ToBeVisibleAsync();
 
         }
     }
