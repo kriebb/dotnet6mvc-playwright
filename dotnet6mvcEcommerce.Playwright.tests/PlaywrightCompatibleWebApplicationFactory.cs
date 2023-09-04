@@ -97,7 +97,6 @@ public class PlaywrightCompatibleWebApplicationFactory : WebApplicationFactory<d
 
     public override async ValueTask DisposeAsync()
     {
-        var aggregateException = new List<Exception>();
         await base.DisposeAsync();
         try
         {
@@ -111,7 +110,6 @@ public class PlaywrightCompatibleWebApplicationFactory : WebApplicationFactory<d
         }
         catch (Exception e)
         {
-            aggregateException.Add(e);
         }
 
         try
@@ -126,10 +124,8 @@ public class PlaywrightCompatibleWebApplicationFactory : WebApplicationFactory<d
         }
         catch (Exception e)
         {
-            aggregateException.Add(e);
         }
 
-        throw new AggregateException("Error when disposing the _hosts for setting up the webapplicationfactory hosts", aggregateException);
 
     }
 }
