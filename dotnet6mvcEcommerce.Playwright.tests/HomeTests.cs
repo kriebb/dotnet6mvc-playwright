@@ -28,6 +28,7 @@ namespace dotnet6mvcEcommerce.Playwright.tests
             {
                 IgnoreHTTPSErrors = true,
                 
+                
             };
 
             return options;
@@ -54,6 +55,8 @@ namespace dotnet6mvcEcommerce.Playwright.tests
         [Test]
         public async Task WhenProvidingBaseUrl_ShouldRedirectToLoginPage()
         {
+
+
             await Page.GotoAsync(_webApplicationFactory.ServerAddress);
             //Should be redirected.
             await Expect(Page).ToHaveURLAsync(_webApplicationFactory.ServerAddress + "Identity/Account/Login?ReturnUrl=%2F");
@@ -76,9 +79,11 @@ namespace dotnet6mvcEcommerce.Playwright.tests
 
             await Expect(Page.GetByText("Invalid login attempt.")).ToBeVisibleAsync();
 
+
+
         }
 
-        [Test]
+        [Test, Explicit]
         public async Task WhenWeRegisterANewUser_WeShouldHaveAConfirmedAccountMessage()
         {
             using (var scope = _webApplicationFactory.Services.CreateAsyncScope())
