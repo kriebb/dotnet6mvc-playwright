@@ -17,6 +17,6 @@ jobs:
     - run: dotnet tool update --global PowerShell
     - run: dotnet build
     - name: Ensure browsers are installed
-      run: pwsh bin/Debug/net6.0/playwright.ps1 install --with-deps
+      run: pwsh dotnet6mvcEcommerce.Playwright.tests/bin/Debug/net6.0/playwright.ps1 install --with-deps
     - name: Run your tests
       run: dotnet test
